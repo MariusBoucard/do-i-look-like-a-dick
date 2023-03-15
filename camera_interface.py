@@ -154,7 +154,7 @@ class MainWindow(QMainWindow):
         # pass the image array to the model to make predictions
         predictions = self.model.predict(img_array)
 
-        print("predicted bite"+str(predictions))
+        print("predicted :"+str(predictions))
 
         pass
     @Slot()
