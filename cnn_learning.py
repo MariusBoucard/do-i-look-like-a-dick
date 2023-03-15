@@ -94,6 +94,11 @@ y = np.array(y)
 print(y)
 print(len(y))
 print(len(x))
+
+unique, counts = np.unique(y, return_counts=True)
+diclass = dict(zip(unique, counts))
+
+print("Voila le nombre d'instance de classes "+str(diclass))
     # image = Image.open(files)
     # # convert image to numpy array
     # data = asarray(image)
@@ -183,13 +188,13 @@ def cnn_model():
 
 X_train=X_train/255
 X_test=X_test/255
-y_train= np_utils.to_categorical(y_train)
-y_test= np_utils.to_categorical(y_test)
+y_train= np_utils.to_categorical(y_train, num_classes=4)
+y_test= np_utils.to_categorical(y_test, num_classes=4)
 num_classes=y_train.shape[1]
 print(num_classes)
 
 model=cnn_model()
-model.fit(X_train, y_train, validation_data=(X_test,y_test),epochs=5, batch_size=32  
+model.fit(X_train, y_train, validation_data=(X_test,y_test),epochs=50, batch_size=32  
           )
 score= model.evaluate(X_test, y_test, verbose=0)
 print('The error is: %.2f%%'%(100-score[1]*100))
@@ -211,7 +216,7 @@ img_array = np.expand_dims(img_array, axis=0)
 # pass the image array to the model to make predictions
 predictions = model.predict(img_array)
 
-print("predicted"+str(predictions))
+print("predicted dicks"+str(predictions))
 
 
 img = load_img('/home/marius/Documents/openclassroom/dataset/cat_0007.jpg', target_size=(224, 224))

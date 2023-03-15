@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: LicenseRef-Qt-Commercial OR BSD-3-Clause
 
 """PySide6 Multimedia Camera Example"""
+import time
 
 import os
 import sys
@@ -14,7 +15,10 @@ from PySide6.QtMultimedia import (QCamera, QImageCapture,
                                   QCameraDevice, QMediaCaptureSession,
                                   QMediaDevices)
 from PySide6.QtMultimediaWidgets import QVideoWidget
-
+from keras.models import load_model
+import numpy as np
+from keras.utils import load_img, img_to_array
+from keras.models import load_model
 
 class ImageView(QWidget):
     def __init__(self, previewImage, fileName):
@@ -26,6 +30,8 @@ class ImageView(QWidget):
         self._image_label = QLabel()
         self._image_label.setPixmap(QPixmap.fromImage(previewImage))
         main_layout.addWidget(self._image_label)
+
+
 
         top_layout = QHBoxLayout()
         self._file_name_label = QLabel(QDir.toNativeSeparators(fileName))
@@ -73,7 +79,7 @@ class MainWindow(QMainWindow):
             self._capture_session = QMediaCaptureSession()
             self._capture_session.setCamera(self._camera)
             self._capture_session.setImageCapture(self._image_capture)
-
+            self.model = load_model('./model.h5')
         self._current_preview = QImage()
 
         tool_bar = QToolBar()
@@ -136,10 +142,27 @@ class MainWindow(QMainWindow):
             n = n + 1
         return None
 
+    def predict_appartenance(self,imgpath):
+
+        img = load_img(imgpath, target_size=(224, 224))
+        img_array = img_to_array(img)
+
+        # remove the extra dimension from the array
+        img_array /= 255.0
+        img_array = np.expand_dims(img_array, axis=0)
+
+        # pass the image array to the model to make predictions
+        predictions = self.model.predict(img_array)
+
+        print("predicted bite"+str(predictions))
+
+        pass
     @Slot()
     def take_picture(self):
         self._current_preview = QImage()
         self._image_capture.captureToFile(self.next_image_file_name())
+        time.sleep(2)
+        self.predict_appartenance(self.next_image_file_name())
 
     @Slot(int, QImage)
     def image_captured(self, id, previewImage):
