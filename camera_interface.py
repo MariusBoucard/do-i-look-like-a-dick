@@ -141,7 +141,7 @@ class MainWindow(QMainWindow):
                 return result
             n = n + 1
         return None
-
+ 
     def predict_appartenance(self,imgpath):
 
         img = load_img(imgpath, target_size=(224, 224))
