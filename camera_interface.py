@@ -160,9 +160,9 @@ class MainWindow(QMainWindow):
     @Slot()
     def take_picture(self):
         self._current_preview = QImage()
-        self._image_capture.captureToFile(self.next_image_file_name())
-        time.sleep(2)
-        self.predict_appartenance(self.next_image_file_name())
+        self.imagepath = self.next_image_file_name()
+        self._image_capture.captureToFile(self.imagepath)
+      
 
     @Slot(int, QImage)
     def image_captured(self, id, previewImage):
@@ -174,6 +174,7 @@ class MainWindow(QMainWindow):
         image_view = ImageView(self._current_preview, fileName)
         self._tab_widget.addTab(image_view, f"Capture #{index}")
         self._tab_widget.setCurrentIndex(index)
+        self.predict_appartenance(self.imagepath)
 
     @Slot(int, QImageCapture.Error, str)
     def _capture_error(self, id, error, error_string):
